@@ -1,5 +1,7 @@
 # ✦ howitsgoing
 
+[![CI](https://github.com/suryaprakashpandey/stats/actions/workflows/ci.yml/badge.svg)](https://github.com/suryaprakashpandey/stats/actions/workflows/ci.yml)
+
 Cute, share-ready progress cards for your app — MRR, active users, GitHub stars, downloads — pulled straight from the tools you already use. Connect once, download fresh images forever.
 
 - **Connect** Stripe, PostHog, GitHub, Plausible, Lemon Squeezy, npm, PyPI (or type a number manually).
