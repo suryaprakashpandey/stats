@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🔌 Provider wishlist
+    url: https://github.com/suryaprakashpandey/stats/issues/6
+    about: Want an integration that isn't here yet? Check the wishlist first and claim one, or suggest it there.
+  - name: 📖 Contributing guide
+    url: https://github.com/suryaprakashpandey/stats/blob/main/CONTRIBUTING.md
+    about: Local setup, a map of the code, and step-by-step guides for adding a provider or a theme.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/suryaprakashpandey/stats/security
+    about: Credential leaks, auth bypasses and the like. Please use private reporting, not a public issue.

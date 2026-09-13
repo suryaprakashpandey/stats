@@ -130,7 +130,7 @@ Next.js 16 differs from older versions in places. If you touch routing, caching 
 
 ## Reporting bugs and proposing features
 
-Open an issue with steps to reproduce, or a description of what you'd like to see. For bugs, include your OS and browser and a screenshot when it's visual. Redact API keys and tokens.
+Open an issue and pick the **Bug report**, **Feature request** or **New provider** template; each asks for the details we need. For bugs, include your OS and browser and a screenshot when it's visual. Redact API keys and tokens.
 
 Labels you'll see:
 

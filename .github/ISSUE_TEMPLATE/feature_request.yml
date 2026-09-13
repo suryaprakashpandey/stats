@@ -1,0 +1,43 @@
+name: ✨ Feature request
+description: Suggest an improvement to cards, the studio, export or the app.
+title: "Feature: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Want a new **integration** (a Stripe-like data source)? Use the "New provider" template instead, or check the [provider wishlist](https://github.com/suryaprakashpandey/stats/issues/6).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to do that you can't today?
+      description: Describe the situation rather than the solution. "I want to post a card showing progress toward 1,000 stars" is more useful than "add a progress bar".
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: How might it work?
+      description: Optional. Sketch the UI or the config, or link to an example from another tool. Drag mockups or screenshots here.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Card design (themes, templates, decorations)
+        - Card editor (studio)
+        - Export and sharing
+        - Dashboard / saved cards
+        - Connections and providers
+        - Sign-in / accounts
+        - Deployment / self-hosting
+        - Something else
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you like to build it?
+      description: No pressure either way. If yes, we'll label it and point you at the right files (see CONTRIBUTING.md).
+      options:
+        - "Yes, I'd like to open a PR"
+        - "Maybe, with some guidance"
+        - "No, just suggesting"

@@ -1,0 +1,63 @@
+name: 🔌 New provider
+description: Propose a new data source (payments, analytics, package registry, social, …).
+title: "Provider: "
+labels: ["provider", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [provider wishlist](https://github.com/suryaprakashpandey/stats/issues/6) first. If the service is already listed, comment on that issue to claim it instead of opening a new one.
+
+        Adding a provider is one file in `src/lib/providers/` plus a catalog entry; the [contributing guide](https://github.com/suryaprakashpandey/stats/blob/main/CONTRIBUTING.md#add-a-provider) walks through it step by step.
+  - type: input
+    id: service
+    attributes:
+      label: Service
+      placeholder: "Fathom Analytics"
+    validations:
+      required: true
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Metrics it should offer
+      description: One per line. For each, say whether it's a **level** (a number at a point in time, e.g. followers, MRR) or a **flow** (accumulates over a period, e.g. downloads, revenue), and whether the API returns history or only the current value.
+      placeholder: |
+        - Visitors: flow, daily history available
+        - Pageviews: flow, daily history available
+    validations:
+      required: true
+  - type: textarea
+    id: api
+    attributes:
+      label: API details
+      description: A link to the API docs, the endpoint(s) you'd call, and any quirks (rate limits, pagination, counts that lag a day, a required User-Agent).
+      placeholder: |
+        https://usefathom.com/api
+        GET https://api.usefathom.com/v1/aggregations?entity=pageview&entity_id=…&aggregates=visits,uniques,pageviews&date_grouping=day
+    validations:
+      required: true
+  - type: dropdown
+    id: auth
+    attributes:
+      label: Authentication
+      options:
+        - No credentials needed (public data, one-click connection)
+        - An API key or token the user pastes
+        - OAuth (needs an app registration; let's discuss)
+        - Something else (explain in API details)
+    validations:
+      required: true
+  - type: input
+    id: scopes
+    attributes:
+      label: Minimum scopes or permissions
+      description: We ask people for read-only credentials wherever possible.
+      placeholder: "Read-only site stats"
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Will you build it?
+      options:
+        - "Yes, I'll open a PR"
+        - "Yes, with some guidance"
+        - "No, just proposing"

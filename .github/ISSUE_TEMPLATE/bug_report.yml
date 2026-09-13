@@ -1,0 +1,69 @@
+name: 🐛 Bug report
+description: Something isn't working the way it should.
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Please **redact API keys, tokens and personal data** from anything you paste.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+      placeholder: |
+        1. Connected PostHog with a personal API key
+        2. Made a Single card with "Daily active users" over 30 days
+        3. Expected a chart; the card shows "😵 us.posthog.com responded 401: …"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where is the problem?
+      options:
+        - A data provider (Stripe, PostHog, GitHub, …)
+        - The card editor (studio)
+        - PNG export or clipboard
+        - Dashboard / saved cards
+        - Connections page
+        - Sign-in / accounts
+        - Playground
+        - Local setup, build or deployment
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: Provider, metric and period (if relevant)
+      placeholder: "PostHog · Daily active users · 30d"
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser and OS, and whether this is local dev (`npm run dev`), your own deployment, or howitsgoing.vercel.app.
+      placeholder: "Chrome on macOS · local dev"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server logs
+      description: Anything relevant from the `npm run dev` terminal or your host's logs. Redact secrets.
+      render: shell
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Drag images here if the problem is visual (a broken card, a wrong export).
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: I removed API keys, tokens and personal data from this report.
+          required: true
