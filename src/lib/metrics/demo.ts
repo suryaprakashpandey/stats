@@ -22,6 +22,7 @@ export const DEMO_PROVIDER: ProviderMeta = {
     { key: "stars", label: "GitHub stars", shortLabel: "Stars", emoji: "⭐", format: "number", kind: "level" },
     { key: "downloads", label: "Downloads", shortLabel: "Downloads", emoji: "📦", format: "number", kind: "flow", defaultChart: "bars" },
     { key: "customers", label: "Customers", shortLabel: "Customers", emoji: "🧑‍🤝‍🧑", format: "number", kind: "level" },
+    { key: "churn", label: "Subscription churn rate", shortLabel: "Churn", emoji: "📉", format: "percent", kind: "level" },
   ],
 };
 
@@ -53,6 +54,8 @@ interface DemoShape {
   noise: number;
   currency?: string;
   seed: number;
+  /** Decimals kept on level values (default 0). */
+  precision?: number;
 }
 
 const SHAPES: Record<string, DemoShape> = {
@@ -63,6 +66,7 @@ const SHAPES: Record<string, DemoShape> = {
   stars: { value: 2431, growth: 0.41, noise: 0.05, seed: 15 },
   downloads: { value: 38_920, growth: 0.22, noise: 0.35, seed: 16 },
   customers: { value: 318, growth: 0.24, noise: 0.04, seed: 17 },
+  churn: { value: 3.8, growth: -0.25, noise: 0.12, seed: 18, precision: 1 },
 };
 
 export function demoMetric(metric: string, period: Period, now = new Date()): MetricResult {
@@ -77,12 +81,15 @@ export function demoMetric(metric: string, period: Period, now = new Date()): Me
     const n = instants.length;
     const rand = mulberry32(shape.seed * 1000 + n);
     const startValue = shape.value * (1 - shape.growth);
+    const precision = shape.precision ?? 0;
+    const m = Math.pow(10, precision);
+    const roundV = (x: number) => Math.round(x * m) / m;
     const series = instants.map(({ t }, i) => {
       const f = n === 1 ? 1 : i / (n - 1);
       const eased = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2;
       const wobble = (rand() - 0.5) * shape.noise * shape.value * (1 - f);
       const v = startValue + (shape.value - startValue) * eased + wobble;
-      return { t, v: Math.round(i === n - 1 ? shape.value : Math.max(0, v)) };
+      return { t, v: roundV(i === n - 1 ? shape.value : Math.max(0, v)) };
     });
     return {
       value: shape.value,

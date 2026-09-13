@@ -7,6 +7,7 @@ import { Button, cn } from "./ui";
 
 const LINKS = [
   { href: "/app", label: "Cards" },
+  { href: "/app/history", label: "History" },
   { href: "/app/connections", label: "Connections" },
 ];
 

@@ -17,6 +17,9 @@ export default async function Dashboard() {
           <p className="mt-1 text-sm text-ink/55">Each card refreshes itself. Open one, hit download, post.</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/app/history" className="rounded-full border border-line bg-white px-3 py-1.5 text-xs font-bold text-ink/70 hover:text-ink">
+            🕰️ History
+          </Link>
           <Link href="/app/connections" className="flex items-center gap-1 rounded-full border border-line bg-white px-3 py-1.5 text-xs font-bold text-ink/70 hover:text-ink">
             {connections.length ? (
               <>

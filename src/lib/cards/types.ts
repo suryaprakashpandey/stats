@@ -31,7 +31,10 @@ export const cardConfigSchema = z.object({
   logoUrl: z
     .string()
     .max(400_000)
-    .refine((s) => s === "" || /^https?:\/\//i.test(s) || /^data:image\//i.test(s), "The logo must be an image URL.")
+    .refine(
+      (s) => s === "" || /^https?:\/\//i.test(s) || /^data:image\//i.test(s) || /^\/[^/]/i.test(s),
+      "The logo must be an image URL.",
+    )
     .default(""),
   showLogo: z.boolean().default(true),
   headline: z.string().max(60).default(""),

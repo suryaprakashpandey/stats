@@ -30,6 +30,7 @@ export const PROVIDERS: ProviderMeta[] = [
       { key: "revenue", label: "Revenue", shortLabel: "Revenue", emoji: "💰", format: "currency", kind: "flow", description: "Successful charges minus refunds.", defaultChart: "bars" },
       { key: "customers", label: "Customers", shortLabel: "Customers", emoji: "🧑‍🤝‍🧑", format: "number", kind: "level" },
       { key: "subscriptions", label: "Active subscriptions", shortLabel: "Subscribers", emoji: "🔁", format: "number", kind: "level" },
+      { key: "churn", label: "Subscription churn rate", shortLabel: "Churn", emoji: "📉", format: "percent", kind: "level", description: "Share of subscribers lost in the trailing 30 days." },
     ],
   },
   {
@@ -129,6 +130,7 @@ export const PROVIDERS: ProviderMeta[] = [
       { key: "revenue", label: "Revenue", shortLabel: "Revenue", emoji: "💰", format: "currency", kind: "flow", defaultChart: "bars" },
       { key: "customers", label: "Customers", shortLabel: "Customers", emoji: "🧑‍🤝‍🧑", format: "number", kind: "level" },
       { key: "subscriptions", label: "Active subscriptions", shortLabel: "Subscribers", emoji: "🔁", format: "number", kind: "level" },
+      { key: "churn", label: "Subscription churn rate", shortLabel: "Churn", emoji: "📉", format: "percent", kind: "level", description: "Share of subscribers lost in the trailing 30 days." },
     ],
   },
   {

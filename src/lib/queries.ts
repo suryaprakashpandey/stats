@@ -32,18 +32,19 @@ export interface SavedCard {
   id: string;
   name: string;
   config: CardConfig;
+  createdAt: string;
   updatedAt: string;
 }
 
 export async function listCards(userId: string): Promise<SavedCard[]> {
   await ensureMigrated();
   const rows = await db.select().from(card).where(eq(card.userId, userId)).orderBy(desc(card.updatedAt));
-  return rows.map((r) => ({ id: r.id, name: r.name, config: parseConfig(r.config), updatedAt: r.updatedAt.toISOString() }));
+  return rows.map((r) => ({ id: r.id, name: r.name, config: parseConfig(r.config), createdAt: r.createdAt.toISOString(), updatedAt: r.updatedAt.toISOString() }));
 }
 
 export async function getCard(userId: string, id: string): Promise<SavedCard | null> {
   await ensureMigrated();
   const row = await db.query.card.findFirst({ where: eq(card.id, id) });
   if (!row || row.userId !== userId) return null;
-  return { id: row.id, name: row.name, config: parseConfig(row.config), updatedAt: row.updatedAt.toISOString() };
+  return { id: row.id, name: row.name, config: parseConfig(row.config), createdAt: row.createdAt.toISOString(), updatedAt: row.updatedAt.toISOString() };
 }

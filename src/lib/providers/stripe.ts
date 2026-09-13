@@ -63,6 +63,20 @@ async function loadSubscriptions(stripe: Stripe): Promise<SubInfo[]> {
   });
 }
 
+/** Trailing-30-day logo churn sampled at each instant: cancelled in the 30d ending at `t` ÷ active at the start of that window. */
+function churnSeries(subs: SubInfo[], w: Window): { series: SeriesPoint[]; previous: number } {
+  const DAY_MS = 86_400_000;
+  const rateAt = (t: Date) => {
+    const start = new Date(t.getTime() - 30 * DAY_MS);
+    const base = subs.filter((s) => s.start <= start && (s.end === null || s.end > start)).length;
+    if (base === 0) return 0;
+    const churned = subs.filter((s) => s.end !== null && s.end > start && s.end <= t).length;
+    return Math.round((churned / base) * 1000) / 10;
+  };
+  const series = levelInstants(w).map(({ t, at: when }) => ({ t, v: rateAt(when) }));
+  return { series, previous: series[0]?.v ?? 0 };
+}
+
 /** Level series for MRR / subscriber count reconstructed from start/end dates. */
 function levelSeries(subs: SubInfo[], w: Window, pick: (s: SubInfo) => number): { series: SeriesPoint[]; previous: number } {
   const at = (t: Date) => {
@@ -118,9 +132,19 @@ export const stripe: ServerProvider = {
       });
     }
 
-    if (req.metric === "mrr" || req.metric === "subscriptions") {
+    if (req.metric === "mrr" || req.metric === "subscriptions" || req.metric === "churn") {
       const lw = levelWindow(w);
       const subs = await loadSubscriptions(s);
+      if (req.metric === "churn") {
+        const { series, previous } = churnSeries(subs, lw);
+        const current = series.at(-1)?.v ?? 0;
+        return baseResult(lw, {
+          value: current,
+          previous,
+          series,
+          note: "Trailing 30-day churn, reconstructed from subscription start and end dates.",
+        });
+      }
       const currency = dominantCurrency(subs.filter((x) => x.active).map((x) => x.currency));
       const inCurrency = subs.filter((x) => x.currency.toLowerCase() === currency);
       if (req.metric === "mrr") {

@@ -109,6 +109,20 @@ function levelSeries(subs: SubInfo[], w: Window, pick: (s: SubInfo) => number): 
   return { series, previous: series[0]?.v ?? at(w.from) };
 }
 
+/** Trailing-30-day logo churn sampled at each instant: cancelled in the 30d ending at `t` ÷ active at the start of that window. */
+function churnSeries(subs: SubInfo[], w: Window): { series: SeriesPoint[]; previous: number } {
+  const DAY_MS = 86_400_000;
+  const rateAt = (t: Date) => {
+    const start = new Date(t.getTime() - 30 * DAY_MS);
+    const base = subs.filter((s) => s.start <= start && (s.end === null || s.end > start)).length;
+    if (base === 0) return 0;
+    const churned = subs.filter((s) => s.end !== null && s.end > start && s.end <= t).length;
+    return Math.round((churned / base) * 1000) / 10;
+  };
+  const series = levelInstants(w).map(({ t, at: when }) => ({ t, v: rateAt(when) }));
+  return { series, previous: series[0]?.v ?? 0 };
+}
+
 export const lemonsqueezy: ServerProvider = {
   id: "lemonsqueezy",
   async verify(ctx) {
@@ -133,9 +147,18 @@ export const lemonsqueezy: ServerProvider = {
       });
     }
 
-    if (req.metric === "mrr" || req.metric === "subscriptions") {
+    if (req.metric === "mrr" || req.metric === "subscriptions" || req.metric === "churn") {
       const lw = levelWindow(w);
       const subs = await loadSubscriptions(ctx);
+      if (req.metric === "churn") {
+        const { series, previous } = churnSeries(subs, lw);
+        return baseResult(lw, {
+          value: series.at(-1)?.v ?? 0,
+          previous,
+          series,
+          note: "Trailing 30-day churn, reconstructed from subscription start and end dates.",
+        });
+      }
       if (req.metric === "mrr") {
         const current = Math.round(subs.filter((s) => s.active).reduce((a, s) => a + s.monthly, 0) * 100) / 100;
         const { series, previous } = levelSeries(subs, lw, (s) => s.monthly);

@@ -11,6 +11,8 @@ export interface ChartProps {
   baseline: "zero" | "min";
   strokeWidth?: number;
   showEndDot?: boolean;
+  /** Faint horizontal gridlines (line/area only). Pass the theme's muted colour. */
+  gridColor?: string;
   id: string;
 }
 
@@ -62,10 +64,12 @@ function smoothPath(pts: { x: number; y: number }[]): string {
   return d;
 }
 
-export function Chart({ values, width, height, style, color, softColor, baseline, strokeWidth = 4, showEndDot = true, id }: ChartProps) {
+export function Chart({ values, width, height, style, color, softColor, baseline, strokeWidth = 4, showEndDot = true, gridColor, id }: ChartProps) {
   if (!values.length) return null;
-  const padX = style === "bars" ? 0 : strokeWidth;
-  const padTop = showEndDot ? 8 : 4;
+  // Line charts need room for the end-dot halo (r ≈ 2.8× stroke) on every side.
+  const halo = strokeWidth * 3;
+  const padX = style === "bars" ? 0 : halo;
+  const padTop = style === "bars" || !showEndDot ? 4 : halo + 4;
   const padBottom = style === "bars" ? 0 : 4;
   const innerW = width - padX * 2;
   const innerH = height - padTop - padBottom;
@@ -116,7 +120,8 @@ export function Chart({ values, width, height, style, color, softColor, baseline
   const n = values.length;
   const pts = values.map((v, i) => ({ x: padX + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW), y: y(v) }));
   const line = smoothPath(pts);
-  const area = `${line} L${pts[n - 1].x},${height} L${pts[0].x},${height} Z`;
+  const base = height - padBottom;
+  const area = `${line} L${pts[n - 1].x},${base} L${pts[0].x},${base} Z`;
   const last = pts[n - 1];
 
   return (
@@ -128,6 +133,10 @@ export function Chart({ values, width, height, style, color, softColor, baseline
         </linearGradient>
       </defs>
       {style === "area" && <path d={area} fill={`url(#grad-${id})`} />}
+      {gridColor &&
+        [0.25, 0.5, 0.75].map((f) => (
+          <line key={f} x1={padX} x2={width - padX} y1={padTop + innerH * f} y2={padTop + innerH * f} stroke={gridColor} strokeWidth={1} opacity={0.3} />
+        ))}
       <path d={line} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
       {showEndDot && (
         <g>
