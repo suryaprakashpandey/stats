@@ -6,6 +6,7 @@ import { saveCard } from "@/lib/actions/cards";
 import { copyBlobToClipboard, downloadBlob, renderCard, renderCardPng, slugify, type CardExportFormat, type CardExportScale } from "@/lib/cards/export";
 import { fileToLogoDataUrl } from "@/lib/cards/logo";
 import { providerForConnection, resolveIdentity } from "@/lib/cards/resolve";
+import { describeCard } from "@/lib/cards/describe";
 import { SIZES, defaultCardConfig, type CardConfig } from "@/lib/cards/types";
 import { DEMO_CONNECTION } from "@/lib/metrics/demo";
 import { describeChange, formatValue } from "@/lib/metrics/format";
@@ -92,6 +93,15 @@ export function Studio({ mode, connections, initial }: StudioProps) {
     }
   };
 
+  const copyAltText = async () => {
+    try {
+      await navigator.clipboard.writeText(describeCard(config, slots));
+      setToast("Alt text copied");
+    } catch {
+      setToast("Couldn't access the clipboard");
+    }
+  };
+
   const copyPostText = async () => {
     const s = slots[0];
     if (!s?.result) return;
@@ -101,7 +111,7 @@ export function Studio({ mode, connections, initial }: StudioProps) {
     const changeText = change ? ` (${change.text} ${change.context})` : "";
     const text = `${s.def.emoji} ${who}${s.label.toLowerCase()} is at ${value}${changeText}. #buildinpublic`;
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(`${text}\n\nAlt: ${describeCard(config, slots)}`);
       setToast("Post text copied ✍️");
     } catch {
       setToast("Couldn't access the clipboard");
@@ -371,6 +381,9 @@ export function Studio({ mode, connections, initial }: StudioProps) {
               </Button>
               <Button size="lg" variant="ghost" onClick={copyPostText} disabled={!slots[0]?.result}>
                 Copy post text
+              </Button>
+              <Button size="lg" variant="ghost" onClick={copyAltText}>
+                Copy alt text
               </Button>
             </div>
 

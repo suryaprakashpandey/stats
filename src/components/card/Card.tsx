@@ -4,6 +4,7 @@ import { resolveIdentity, type CardIdentity } from "@/lib/cards/resolve";
 import { getTheme, type Theme } from "@/lib/cards/themes";
 import { SIZES, type CardConfig, type CardSlot } from "@/lib/cards/types";
 import { describeChange, formatDate, formatValue, niceMilestone, type ChangeInfo } from "@/lib/metrics/format";
+import { stackLayout } from "@/lib/cards/layout";
 import { Chart } from "./Chart";
 
 export interface CardProps {
@@ -282,18 +283,7 @@ function Single({ config, slot, theme, identity, id }: { config: CardConfig; slo
 /* ------------------------------------------------------------------ */
 
 function Stack({ config, slots, theme, identity, id }: { config: CardConfig; slots: CardSlot[]; theme: Theme; identity: CardIdentity; id: string }) {
-  const wide = config.size === "wide";
-  const pad = wide ? 32 : 40;
-  const size = SIZES[config.size];
-  const n = Math.max(1, slots.length);
-  const cols = wide ? (n <= 2 ? n : 2) : n <= 2 ? 1 : 2;
-  const rows = Math.ceil(n / cols);
-  const gap = 14;
-  const tileW = (size.w - pad * 2 - gap * (cols - 1)) / cols;
-  const headerH = identity.name || identity.logoUrl || config.showDate ? (wide ? 32 : 40) + 18 : 0;
-  const footerH = config.caption || config.showWatermark ? 16 + 18 : 0;
-  const tileH = (size.h - pad * 2 - headerH - footerH - gap * (rows - 1)) / rows;
-  const showSpark = config.showChart && tileH >= 120;
+  const { wide, pad, cols, gap, tileW, tileH, showSpark } = stackLayout(config, slots.length, identity);
 
   return (
     <div style={{ position: "relative", display: "flex", flexDirection: "column", flex: 1, padding: pad, gap: 18 }}>
